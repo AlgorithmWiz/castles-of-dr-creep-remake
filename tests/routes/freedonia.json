@@ -1,0 +1,487 @@
+{
+  "castle": "freedonia",
+  "won": true,
+  "actions": [
+    {
+      "kind": "use",
+      "x": -7.56,
+      "target": "bell-0",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 0.81,
+      "y": 0,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -6.4799999999999995,
+      "target": "bell-2",
+      "allowDeath": true
+    },
+    {
+      "kind": "recall"
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-0",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 1.89,
+      "y": 7.2,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 7.02,
+      "target": "white",
+      "allowDeath": true
+    },
+    {
+      "kind": "recall"
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-0",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 1.89,
+      "y": 5.28,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 2.7,
+      "target": "power-1",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 5.13,
+      "y": 3.84,
+      "allowDeath": true
+    },
+    {
+      "kind": "wait",
+      "seconds": 5,
+      "allowDeath": true
+    },
+    {
+      "kind": "walk",
+      "x": 0.79,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 8.91,
+      "target": "door-0",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 0.81,
+      "y": 0,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-2",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.97,
+      "y": 1.92,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -6.75,
+      "y": 4.32,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.43,
+      "y": 5.76,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -9.45,
+      "y": 7.2,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.43,
+      "y": 9.6,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -5.94,
+      "target": "lock-0",
+      "allowDeath": true
+    },
+    {
+      "kind": "recall"
+    },
+    {
+      "kind": "climb",
+      "x": 0.81,
+      "y": 0,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-2",
+      "allowDeath": true
+    },
+    {
+      "kind": "walk",
+      "x": -10.55,
+      "allowDeath": true
+    },
+    {
+      "kind": "wait",
+      "seconds": 5,
+      "allowDeath": true
+    },
+    {
+      "kind": "wait",
+      "seconds": 5,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.97,
+      "y": 1.92,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -6.75,
+      "y": 4.32,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.43,
+      "y": 5.76,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -9.45,
+      "y": 7.2,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.43,
+      "y": 9.6,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-3",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -9.45,
+      "y": 0,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 9.45,
+      "y": 10.56,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 4.05,
+      "y": 7.68,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 4.32,
+      "target": "bell-0",
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 7.29,
+      "target": "door-3",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -5.67,
+      "y": 10.56,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.97,
+      "y": 2.4,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -6.4799999999999995,
+      "target": "red",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.97,
+      "y": 10.56,
+      "allowDeath": true
+    },
+    {
+      "kind": "recall"
+    },
+    {
+      "kind": "climb",
+      "x": 0.81,
+      "y": 0,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-2",
+      "allowDeath": true
+    },
+    {
+      "kind": "walk",
+      "x": -10.55,
+      "allowDeath": true
+    },
+    {
+      "kind": "wait",
+      "seconds": 5,
+      "allowDeath": true
+    },
+    {
+      "kind": "wait",
+      "seconds": 5,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.97,
+      "y": 1.92,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -6.75,
+      "y": 4.32,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.43,
+      "y": 5.76,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -9.45,
+      "y": 7.2,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -2.43,
+      "y": 9.6,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-3",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -9.45,
+      "y": 0,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 9.45,
+      "y": 10.56,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 4.05,
+      "y": 7.68,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 7.29,
+      "target": "door-3",
+      "allowDeath": true
+    },
+    {
+      "kind": "reset",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": -5.67,
+      "y": 10.56,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 9.45,
+      "y": 5.28,
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 3.51,
+      "y": 0,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 5.94,
+      "target": "lock-0",
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 8.91,
+      "target": "door-2",
+      "allowDeath": true
+    },
+    {
+      "kind": "climb",
+      "x": 7.29,
+      "y": 7.68,
+      "allowDeath": true
+    },
+    {
+      "kind": "use",
+      "x": 6.48,
+      "target": "power-9",
+      "allowDeath": true
+    },
+    {
+      "kind": "return"
+    },
+    {
+      "kind": "climb",
+      "x": -4.05,
+      "y": 6.72
+    },
+    {
+      "kind": "use",
+      "x": -5.4,
+      "target": "power-5"
+    },
+    {
+      "kind": "return"
+    },
+    {
+      "kind": "climb",
+      "x": -1.89,
+      "y": 4.8
+    },
+    {
+      "kind": "use",
+      "x": -0.54,
+      "target": "power-6"
+    },
+    {
+      "kind": "return"
+    },
+    {
+      "kind": "climb",
+      "x": 1.89,
+      "y": 7.2
+    },
+    {
+      "kind": "use",
+      "x": 0,
+      "target": "power-7"
+    },
+    {
+      "kind": "return"
+    },
+    {
+      "kind": "climb",
+      "x": 4.05,
+      "y": 5.28
+    },
+    {
+      "kind": "use",
+      "x": 5.4,
+      "target": "power-8"
+    },
+    {
+      "kind": "return"
+    },
+    {
+      "kind": "climb",
+      "x": 9.45,
+      "y": 0
+    },
+    {
+      "kind": "use",
+      "x": -7.02,
+      "target": "bell-0"
+    },
+    {
+      "kind": "use",
+      "x": -8.91,
+      "target": "door-1"
+    },
+    {
+      "kind": "climb",
+      "x": 4.59,
+      "y": 1.44
+    },
+    {
+      "kind": "use",
+      "x": 6.48,
+      "target": "bell-3"
+    },
+    {
+      "kind": "use",
+      "x": 9.45,
+      "target": "door-5"
+    }
+  ],
+  "elapsed": 209.45692250152453,
+  "returns": 7,
+  "visited": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "deaths": 3
+}

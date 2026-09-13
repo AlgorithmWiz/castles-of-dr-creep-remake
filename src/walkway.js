@@ -29,8 +29,8 @@ export function climbingOpenings(room, from, to, y) {
 export function crossedLanding(stops, oldY, newY, direction, sideways) {
   const crossed = stops.filter((y) =>
     direction > 0
-      ? y > oldY + 0.001 && y <= newY + 0.001
-      : y < oldY - 0.001 && y >= newY - 0.001,
+      ? y > oldY && y <= newY
+      : y < oldY && y >= newY,
   );
   if (crossed.length)
     return direction > 0 ? Math.min(...crossed) : Math.max(...crossed);

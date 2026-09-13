@@ -370,9 +370,11 @@ export class ClassicGame {
         l.yTop,
       );
       entity.walking = Math.abs(entity.y - oldY) > 0.001;
-      const stop = crossedLanding(l.stops, oldY, entity.y, dir, horizontal);
       const endpoint =
         (entity.y === l.yTop && dir > 0) || (entity.y === l.yBottom && dir < 0);
+      const stop = endpoint
+        ? entity.y
+        : crossedLanding(l.stops, oldY, entity.y, dir, horizontal);
       if (stop !== undefined && (endpoint || horizontal)) {
         const landings = this.room.platforms.filter(
           (p) =>

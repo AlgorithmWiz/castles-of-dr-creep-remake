@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { CASTLES, castleById } from "../src/catalog.js";
 import { ClassicGame } from "../src/classic-game.js";
 import { Game } from "../src/game.js";
-import { climbingOpenings } from "../src/walkway.js";
+import { climbingOpenings, crossedLanding } from "../src/walkway.js";
 import { playAction } from "../scripts/play-route.mjs";
 
 test("every imported ladder and pole landing can be reached and dismounted at 20 and 60 fps", () => {
@@ -77,6 +77,57 @@ test("every imported ladder and pole landing can be reached and dismounted at 20
             }
     }
   assert.ok(traversals > 2000);
+});
+
+test("endpoint release works without sideways input, including fractional frame times", () => {
+  assert.equal(crossedLanding([6.24], 6.20, 6.2395, 1, 0), undefined);
+  assert.equal(crossedLanding([6.24], 6.2395, 6.24, 1, 0), 6.24);
+  assert.equal(crossedLanding([0], 0.0005, 0, -1, 0), 0);
+  let endpoints = 0;
+  for (const c of CASTLES) {
+    const g = new ClassicGame(c);
+    for (const r of c.rooms) {
+      g.loadRoom(r.number);
+      for (const [pole, links] of [
+        [false, r.ladders],
+        [true, r.poles],
+      ])
+        for (const l of links) {
+          if (l.stops.length < 2) continue;
+          for (const dir of pole ? [-1] : [-1, 1]) {
+            const target = dir > 0 ? l.yTop : l.yBottom;
+            // Reproduce the last sub-millimetre of a climb, then vary frame time.
+            const e = {
+              x: l.x,
+              y: target - dir * 0.0005,
+              climbing: { ...l, pole },
+            };
+            g.move(e, 0.007, 0, dir, 3.65);
+            assert.equal(e.climbing, null, `${r.id}/${l.id}: stuck at endpoint`);
+            assert.ok(g.supports(e.x, e.y).length);
+            e.x = l.x;
+            e.y = dir > 0 ? l.yBottom : l.yTop;
+            e.climbing = { ...l, pole };
+            for (let frame = 0; e.climbing && frame < 2000; frame++)
+              g.move(
+                e,
+                [0.013, 0.017, 0.016, 0.05, 0.007][frame % 5],
+                0,
+                dir,
+                3.65,
+              );
+            assert.equal(
+              e.climbing,
+              null,
+              `${r.id}/${l.id}: held direction never releases`,
+            );
+            assert.equal(e.y, target);
+            endpoints++;
+          }
+        }
+    }
+  }
+  assert.ok(endpoints > 500);
 });
 
 test("an open trap cannot drop a character holding a ladder; stepping onto it remains dangerous", () => {

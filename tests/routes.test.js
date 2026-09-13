@@ -19,6 +19,6 @@ for (const file of readdirSync(new URL("./routes/", import.meta.url))) {
     for (const [i, a] of route.actions.entries())
       assert.ok(playAction(g, a), `Action ${i}: ${JSON.stringify(a)}`);
     assert.ok(g.won);
-    assert.equal(deaths, 0);
+    assert.equal(deaths, route.deaths ?? 0);
   });
 }

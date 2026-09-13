@@ -69,9 +69,9 @@ Online progress is saved in the browser on the GitHub Pages domain, separately f
 npm test
 ```
 
-Tests cover all castle and room counts, exact platform conversion, door and mechanism references, structural routes to every room/key/exit, original movement and machinery, save round-trips, pause behavior, and enemy death phases. Every imported ladder/pole landing is exercised at 20 and 60 fps, including the 94 landings just outside a platform edge. Regression tests cover climbing over traps, shared controls, the original trap footprint, and Sylvania’s remote monster-operated trap puzzle.
+Tests cover all castle and room counts, exact platform conversion, door and mechanism references, structural routes to every room/key/exit, original movement and machinery, save round-trips, pause behavior, and enemy death phases. Every imported ladder/pole landing is exercised at 20 and 60 fps, including the 94 landings just outside a platform edge. Endpoint tests also use fractional frame times and held vertical input, so players and monsters cannot remain stuck at the ends of ladders. Regression tests cover climbing over traps, shared controls, the original trap footprint, and Sylvania’s remote monster-operated trap puzzle.
 
-Complete input replays verify the tutorial, Blackthorn, Rittenhouse and Lovecraft with hazards enabled. Rittenhouse uses the pause menu’s entrance recovery. Other castles have structural and mechanism coverage; full completion of each has not yet been verified. Structural route analysis ignores timed hazards and conveyor resistance and is not a substitute for an end-to-end play-through.
+Complete input replays verify the tutorial, Blackthorn, Rittenhouse, Lovecraft and Freedonia with hazards enabled. Rittenhouse and Freedonia use the pause menu’s entrance recovery; Freedonia also exercises normal death and retry. Other castles have structural and mechanism coverage; full completion of each has not yet been verified. Structural route analysis ignores timed hazards and conveyor resistance and is not a substitute for an end-to-end play-through.
 
 Open [renderer verification](http://localhost:3000/tests/visual.html) to render all **223** rooms, inspect individual rooms, and scrub each enemy death animation. All 223 rooms were rendered successfully in the browser. This page never writes gameplay saves.
 
