@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>All castles · Renderer verification</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/vendor/three.module.js",
+          "three/addons/": "/vendor/addons/"
+        }
+      }
+    </script>
+    <style>
+      body {
+        margin: 0;
+        background: #101615;
+        color: #e7e7d8;
+        font: 13px system-ui;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        padding: 12px 20px;
+      }
+      button,
+      select {
+        color: #e7e7d8;
+        background: #354235;
+        border: 1px solid #87916e;
+        padding: 8px;
+        cursor: pointer;
+      }
+      #host {
+        height: calc(100vh - 110px);
+        width: 100%;
+      }
+      #result {
+        color: #dec78f;
+      }
+      #metrics {
+        margin-left: auto;
+        font: 12px monospace;
+      }
+      #detail {
+        padding: 0 20px 10px;
+        color: #b2bea6;
+      }
+      input {
+        width: 140px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <label
+        >Castle
+        <select id="castle"></select></label
+      ><label
+        >Room
+        <select id="room"></select></label
+      ><button id="verify">Verify all 223 rooms</button
+      ><label
+        >Death
+        <select id="cause">
+          <option value="fall">Trapdoor fall</option>
+          <option value="lightning">Electrocution</option>
+          <option value="ray">Ray gun</option>
+        </select></label
+      ><button id="preview">Preview enemy death</button
+      ><label
+        >Time
+        <input
+          id="death-time"
+          type="range"
+          min="0"
+          max="205"
+          value="45" /></label
+      ><span id="result"></span><span id="metrics"></span>
+    </header>
+    <div id="detail"></div>
+    <div id="host"></div>
+    <script type="module">
+      import { Game } from "/src/game.js";
+      import { ClassicGame } from "/src/classic-game.js";
+      import { RemakeScene } from "/src/original-scene.js";
+      import { ALL_CASTLES } from "/src/catalog.js";
+      import { beginEnemyDeath } from "/src/enemy-death.js";
+      const $ = (id) => document.getElementById(id),
+        view = new RemakeScene($("host"));
+      let castle = ALL_CASTLES[1],
+        game,
+        verifying = false,
+        previewEnemy = null;
+      $("castle").innerHTML = ALL_CASTLES.map(
+        (c) => `<option value="${c.id}">${c.name}</option>`,
+      ).join("");
+      $("castle").value = castle.id;
+      function selectCastle(c) {
+        castle = c;
+        game = c.original ? new ClassicGame(c) : new Game();
+        game.started = true;
+        game.paused = true;
+        $("castle").value = c.id;
+        $("room").innerHTML = c.rooms
+          .map((r, i) => `<option value="${i}">${i + 1}</option>`)
+          .join("");
+        build(0);
+      }
+      function build(i) {
+        previewEnemy = null;
+        if (game.states) delete game.states[i];
+        game.loadRoom(i);
+        view.build(game.room, i);
+        $("room").value = i;
+        $("detail").textContent =
+          `${game.room.name} · ${game.room.enemies.length} residents · ${game.room.doors.length} doors`;
+      }
+      $("castle").onchange = () =>
+        selectCastle(ALL_CASTLES.find((c) => c.id === $("castle").value));
+      $("room").onchange = () => build(+$("room").value);
+      $("verify").onclick = async () => {
+        if (verifying) return;
+        verifying = true;
+        $("verify").disabled = true;
+        let count = 0,
+          maxGeometry = 0;
+        try {
+          for (const c of ALL_CASTLES) {
+            selectCastle(c);
+            for (let i = 0; i < c.rooms.length; i++) {
+              build(i);
+              for (const o of view.root.children)
+                if (!o.position.toArray().every(Number.isFinite))
+                  throw Error("Nonfinite object");
+              view.render(game, 0.016);
+              count++;
+              maxGeometry = Math.max(
+                maxGeometry,
+                view.renderer.info.memory.geometries,
+              );
+              $("result").textContent = `${count} / 223 · ${c.name} ${i + 1}`;
+              await new Promise(requestAnimationFrame);
+            }
+          }
+          $("result").textContent =
+            `PASS: ${count} rooms rendered · peak ${maxGeometry} geometries`;
+        } catch (e) {
+          $("result").textContent =
+            `FAIL: ${castle.name} ${game.roomIndex + 1}: ${e.message}`;
+          console.error(e);
+        }
+        verifying = false;
+        $("verify").disabled = false;
+      };
+      $("preview").onclick = () => {
+        if (!game.enemies.length) {
+          selectCastle(ALL_CASTLES.find((c) => c.id === "sylvania"));
+          build(castle.rooms.findIndex((r) => r.enemies.length));
+        } else build(game.roomIndex);
+        const e = game.enemies[0];
+        e.active = true;
+        const y = e.y ?? 0;
+        beginEnemyDeath(
+          e,
+          $("cause").value,
+          $("cause").value === "fall" ? y - 4 : y,
+          1,
+        );
+        previewEnemy = e;
+        scrub();
+      };
+      function scrub() {
+        if (!previewEnemy) return;
+        previewEnemy.death.time = +$("death-time").value / 100;
+        $("detail").textContent =
+          `${game.room.name} · ${previewEnemy.kind} · ${previewEnemy.death.cause} at ${previewEnemy.death.time.toFixed(2)} seconds · alive: ${previewEnemy.alive}`;
+      }
+      $("death-time").oninput = scrub;
+      selectCastle(castle);
+      let last = performance.now(),
+        total = 0,
+        frames = 0,
+        windowStart = last;
+      function frame(now) {
+        const elapsed = (now - last) / 1000;
+        const dt = Math.min(elapsed, 0.05);
+        last = now;
+        if (!verifying) view.render(game, dt);
+        total += elapsed;
+        frames++;
+        if (now - windowStart > 1500) {
+          $("metrics").textContent =
+            `${Math.round(frames / total)} fps · ${view.renderer.info.memory.geometries} geometries · ${view.renderer.info.memory.textures} textures`;
+          total = 0;
+          frames = 0;
+          windowStart = now;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>

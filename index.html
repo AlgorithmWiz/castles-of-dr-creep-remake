@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111716" />
+    <title>The Castles of Dr. Creep — Reimagined</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23111716'/%3E%3Cpath d='M8 32V10h5v5h5V7h5v8h5v-5h5v22H8m10 0v-9h7v9' fill='%23c4ad77'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/vendor/three.module.js",
+          "three/addons/": "/vendor/addons/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <svg class="svg-library" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <symbol id="i-castle" viewBox="0 0 32 32">
+          <path
+            d="M4 28V9h4v4h4V5h8v8h4V9h4v19H4Z M13 28v-8h6v8 M15 5V2h6l-2 2h-4"
+          />
+        </symbol>
+        <symbol id="i-key" viewBox="0 0 24 24">
+          <circle cx="8" cy="8" r="4" />
+          <path d="m11 11 9 9m-4-4 3-3m-1 5 3-3" />
+        </symbol>
+        <symbol id="i-map" viewBox="0 0 24 24">
+          <path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16" />
+        </symbol>
+        <symbol id="i-sound" viewBox="0 0 24 24">
+          <path d="M11 4 6 8H3v8h3l5 4V4Zm4 4q5 4 0 8m3-11q8 7 0 14" />
+        </symbol>
+        <symbol id="i-settings" viewBox="0 0 24 24">
+          <path d="M4 7h16M4 17h16M8 4v6m8 4v6" />
+        </symbol>
+        <symbol id="i-expand" viewBox="0 0 24 24">
+          <path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6" />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M4 12h16m-6-6 6 6-6 6" />
+        </symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24">
+          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" />
+          <circle cx="12" cy="12" r="3" />
+        </symbol>
+      </defs>
+    </svg>
+    <header class="app-header">
+      <a href="/" class="brand" aria-label="The Castles of Dr. Creep home"
+        ><span class="brand-mark"
+          ><svg><use href="#i-castle" /></svg></span
+        ><span
+          ><span class="brand-small">THE CASTLES OF</span
+          ><strong>DR. CREEP<span class="brand-dot">.</span></strong></span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <button class="nav-link active" id="nav-play">The castle</button
+        ><button class="nav-link" id="nav-map">Castle map <kbd>M</kbd></button
+        ><button class="nav-link" id="nav-castles">All castles</button
+        ><button class="nav-link" id="nav-guide">Field guide</button>
+      </nav>
+      <div class="edition">
+        <span class="live-dot"></span> THE 1984 CLASSIC, REIMAGINED
+      </div>
+      <button class="icon-button" id="settings-btn" aria-label="Settings">
+        <svg><use href="#i-settings" /></svg>
+      </button>
+    </header>
+
+    <main>
+      <section class="game-column">
+        <div class="chapter-heading">
+          <div>
+            <div class="eyebrow">
+              <span class="small-line"></span>
+              <span id="castle-heading">SYLVANIA CASTLE</span>
+              <span class="separator">/</span>
+              <span id="edition-heading">THE ORIGINAL ESTATES</span>
+            </div>
+            <h1 id="room-name">The Antechamber</h1>
+          </div>
+          <div class="room-count">
+            <span id="room-number">01</span
+            ><span>
+              / <span id="room-total">16</span><br /><small>ROOMS</small></span
+            >
+          </div>
+        </div>
+        <div class="stage" id="stage">
+          <div
+            id="canvas-host"
+            aria-label="3D castle game. Use arrow keys or WASD to move and climb. E to interact."
+            tabindex="0"
+          ></div>
+          <div class="stage-top">
+            <span class="room-badge"
+              ><i></i><span id="stage-status">AWAITING EXPLORER</span></span
+            >
+            <div class="stage-tools">
+              <button
+                class="icon-button"
+                id="pause-btn"
+                aria-label="Pause game"
+                title="Pause"
+                disabled
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 5v14M16 5v14" />
+                </svg></button
+              ><button
+                class="icon-button"
+                id="sound-btn"
+                aria-label="Enable sound"
+                title="Toggle sound"
+              >
+                <svg><use href="#i-sound" /></svg
+                ><span class="sound-slash"></span></button
+              ><button
+                class="icon-button"
+                id="fullscreen-btn"
+                aria-label="Toggle fullscreen"
+                title="Fullscreen"
+              >
+                <svg><use href="#i-expand" /></svg>
+              </button>
+            </div>
+          </div>
+          <div class="room-watermark" id="castle-watermark" aria-hidden="true">
+            SYLVANIA · EST. MCMLXXXIV
+          </div>
+          <div id="interact-prompt" class="interact-prompt hidden">
+            <kbd>E</kbd><span>Interact</span>
+          </div>
+          <div id="toast" class="toast hidden" role="status"></div>
+          <div class="stage-bottom">
+            <span
+              ><span class="gold-diamond">◇</span>
+              <span id="stage-hint">Every castle has a way out.</span></span
+            ><span class="view-label">2.5D <span>·</span> REMASTERED</span>
+          </div>
+          <div id="start-overlay" class="start-overlay">
+            <div class="intro-card">
+              <div class="intro-emblem">
+                <svg><use href="#i-castle" /></svg>
+              </div>
+              <div class="eyebrow">ENTER IF YOU DARE</div>
+              <h2>Some doors<br />should stay closed.</h2>
+              <p id="intro-copy">
+                Thirteen castles. A familiar nightmare.<br />The doctor has been
+                expecting you.
+              </p>
+              <button id="start-btn" class="primary-button">
+                <span>Enter the castle</span
+                ><svg><use href="#i-arrow" /></svg></button
+              ><button id="continue-btn" class="text-button hidden">
+                Continue your expedition <span>↗</span>
+              </button>
+              <button id="choose-castle-btn" class="text-button">
+                Explore all 13 castles <span>↗</span>
+              </button>
+              <div class="intro-footnote">
+                A PUZZLE ADVENTURE · TAKE YOUR TIME
+              </div>
+            </div>
+          </div>
+          <div id="death-flash" class="death-flash"></div>
+          <div class="touch-controls" aria-label="Touch controls">
+            <div>
+              <button data-hold="ArrowLeft" aria-label="Move left">←</button
+              ><button data-hold="ArrowRight" aria-label="Move right">→</button>
+            </div>
+            <div>
+              <button data-hold="ArrowUp" aria-label="Climb up">↑</button
+              ><button data-hold="ArrowDown" aria-label="Climb down">↓</button
+              ><button data-action="interact" aria-label="Interact">E</button>
+            </div>
+          </div>
+        </div>
+        <div class="control-bar">
+          <div>
+            <span class="key-group"
+              ><kbd>W</kbd
+              ><span><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span></span
+            ><span>Move & climb</span>
+          </div>
+          <span class="control-divider"></span>
+          <div><kbd>E</kbd><span>Interact</span></div>
+          <div><kbd>M</kbd><span>Map</span></div>
+          <div><kbd>Esc</kbd><span>Pause</span></div>
+          <button id="help-btn">How to play <span>↗</span></button>
+        </div>
+        <div class="below-stage">
+          <span
+            ><i class="live-dot"></i> Built for the curious. Survived by the
+            clever.</span
+          ><span>NO JUMPING. JUST INGENUITY.</span>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="expedition-panel">
+          <div class="section-label">YOUR EXPEDITION <span>01</span></div>
+          <div class="castle-title">
+            <svg><use href="#i-castle" /></svg>
+            <div>
+              <h2 id="castle-title">Sylvania</h2>
+              <p id="castle-description">A most unwelcoming estate</p>
+            </div>
+          </div>
+          <div class="stats">
+            <div>
+              <span class="stat-value" id="time-value">00:00</span
+              ><span class="stat-label">TIME INSIDE</span>
+            </div>
+            <div>
+              <span class="stat-value" id="returns-value">0</span
+              ><span class="stat-label">RETURNS</span>
+            </div>
+          </div>
+          <div class="exploration-line">
+            <span>Castle explored</span
+            ><strong id="explored-value">0 / 6</strong>
+          </div>
+          <div class="progress-track"><div id="explored-bar"></div></div>
+        </section>
+        <section class="inventory-panel">
+          <div class="section-label">
+            THE WAY OUT <span id="key-count">0 / 3</span>
+          </div>
+          <h3>Every key tells a story.</h3>
+          <div class="key-inventory" id="key-inventory">
+            <div
+              class="key-slot"
+              id="key-bronze"
+              title="Brass key — The Antechamber"
+            >
+              <svg><use href="#i-key" /></svg><span>BRASS</span><i></i>
+            </div>
+            <div
+              class="key-slot"
+              id="key-silver"
+              title="Silver key — The Laboratory"
+            >
+              <svg><use href="#i-key" /></svg><span>SILVER</span><i></i>
+            </div>
+            <div
+              class="key-slot"
+              id="key-gold"
+              title="Gold key — The Engine Room"
+            >
+              <svg><use href="#i-key" /></svg><span>GOLD</span><i></i>
+            </div>
+          </div>
+          <p class="inventory-copy" id="inventory-copy">
+            Find the three keys to unlock<br />the castle’s final gate.
+          </p>
+        </section>
+        <section class="objective-panel">
+          <div class="section-label">
+            <span class="gold-diamond">◇</span> CURRENT OBJECTIVE
+          </div>
+          <h3 id="objective-title">Cross the threshold</h3>
+          <p id="objective-copy">
+            Begin your expedition into Blackthorn. A little curiosity can be a
+            dangerous thing.
+          </p>
+          <button id="hint-btn" class="hint-button">
+            <svg><use href="#i-eye" /></svg> A little nudge <span>↗</span>
+          </button>
+        </section>
+        <button id="map-card" class="map-card">
+          <div class="map-card-top">
+            <svg><use href="#i-map" /></svg><span>Know your way around.</span
+            ><span>↗</span>
+          </div>
+          <div id="mini-map" class="mini-map"></div>
+          <div class="map-card-bottom">
+            <span>VIEW CASTLE MAP</span><kbd>M</kbd>
+          </div>
+        </button>
+        <div class="sidebar-note">
+          <span>“</span>
+          <p>Do make yourself at home.<br />Most of my guests do. Forever.</p>
+          <small>— DR. CREEP</small>
+        </div>
+      </aside>
+    </main>
+    <footer>
+      <span>A LOVE LETTER TO THE COMMODORE 64 ORIGINAL</span>
+      <div>
+        <span class="footer-diamond">◆</span
+        ><span>1984 <span class="footer-arrow">→</span> REIMAGINED</span>
+      </div>
+      <button id="credits-btn">About this remake ↗</button>
+    </footer>
+
+    <div class="modal-backdrop hidden" id="modal-backdrop">
+      <section
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        tabindex="-1"
+      >
+        <button class="modal-close icon-button" aria-label="Close dialog">
+          ×
+        </button>
+        <div id="modal-content"></div>
+      </section>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
