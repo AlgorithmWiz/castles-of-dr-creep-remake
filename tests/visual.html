@@ -7,8 +7,8 @@
     <script type="importmap">
       {
         "imports": {
-          "three": "/vendor/three.module.js",
-          "three/addons/": "/vendor/addons/"
+          "three": "../vendor/three.module.js",
+          "three/addons/": "../vendor/addons/"
         }
       }
     </script>
@@ -84,11 +84,11 @@
     <div id="detail"></div>
     <div id="host"></div>
     <script type="module">
-      import { Game } from "/src/game.js";
-      import { ClassicGame } from "/src/classic-game.js";
-      import { RemakeScene } from "/src/original-scene.js";
-      import { ALL_CASTLES } from "/src/catalog.js";
-      import { beginEnemyDeath } from "/src/enemy-death.js";
+      import { Game } from "../src/game.js";
+      import { ClassicGame } from "../src/classic-game.js";
+      import { RemakeScene } from "../src/original-scene.js";
+      import { ALL_CASTLES } from "../src/catalog.js";
+      import { beginEnemyDeath } from "../src/enemy-death.js";
       const $ = (id) => document.getElementById(id),
         view = new RemakeScene($("host"));
       let castle = ALL_CASTLES[1],

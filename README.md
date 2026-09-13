@@ -2,6 +2,8 @@
 
 A playable single-player Three.js remake of Ed Hobbs’s 1984 Commodore 64 puzzle adventure. Includes **all 13 original castles (204 rooms), the original tutorial (13 rooms), and Blackthorn (six bonus rooms)**. Original room layouts and object records are imported from C64 data; the 3D artwork, animation, interface, audio and JavaScript simulation are new.
 
+**[Play online on GitHub Pages](https://algorithmwiz.github.io/castles-of-dr-creep-remake/)** — no download or installation needed.
+
 ## Run
 
 Requires Node.js 20 or later. No package installation or build is needed.
@@ -51,6 +53,12 @@ This is a modern single-player adaptation, rather than a cycle-accurate C64 emul
 - `src/main.js`, `src/castle-map.js`, `src/audio.js`: interface, input, per-castle saves, maps, settings and procedural audio.
 
 Three.js **r186** is copied from `C:\three.js-master`, with a minimal local postprocessing dependency set. All geometry, stone textures and effects are generated in code. Optional Google Fonts have offline system-font fallbacks.
+
+## GitHub Pages
+
+The site publishes from the root of `main` using GitHub Pages. Pushing updates to `main` automatically redeploys the game. `.nojekyll` serves the existing static files directly; there is no build step. Relative asset paths support both the GitHub repository URL and a local web server.
+
+Online progress is saved in the browser on the GitHub Pages domain, separately from any localhost saves.
 
 ## Verification
 
