@@ -1,5 +1,6 @@
 import { KEY_INFO, castleById } from "./catalog.js";
 import { beginEnemyDeath, advanceEnemyDeath } from "./enemy-death.js";
+import { crossedLanding } from "./walkway.js";
 
 const EPS = 0.055;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -38,7 +39,7 @@ export class ClassicGame {
         ...e,
         alive: true,
         active: !e.dormant,
-        facing: 1,
+        facing: e.wakeDirection ?? 1,
         walking: false,
         climbing: null,
         death: null,
@@ -179,7 +180,7 @@ export class ClassicGame {
   }
   nearby() {
     const p = this.player;
-    if (!this.started || this.won || this.deathTimer) return null;
+    if (!this.started || this.won || this.deathTimer || p.climbing) return null;
     const candidates = [
       ...this.room.keys
         .filter((k) => !this.keys.has(k.id))
@@ -251,7 +252,21 @@ export class ClassicGame {
         text: `Transmitted to the ${target.name.toLowerCase()} receiver.`,
       });
     }
-    if (item.type === "switch") this.activate(item);
+    if (item.type === "switch") {
+      // Several source records can share one physical control (including the
+      // six-machine circuit that exceeds a single record's four references).
+      const group = this.room.switches.filter(
+        (s) => s.kind === item.kind && s.x === item.x && s.y === item.y,
+      );
+      if (item.kind === "power") {
+        this.activate({
+          ...item,
+          machines: [...new Set(group.flatMap((s) => s.machines))],
+        });
+        for (const s of group)
+          if (s.id !== item.id) this.switches[s.id] = !this.switches[s.id];
+      } else for (const s of group) this.activate(s);
+    }
   }
   activate(s, automatic = false) {
     if (s.kind === "bell") {
@@ -335,6 +350,14 @@ export class ClassicGame {
         : "Back at the room entrance. Your discoveries are safe.",
     });
   }
+  recall() {
+    if (!this.started || this.won) return;
+    this.returns++;
+    this.loadRoom(this.castle.startRoom, this.castle.startDoor);
+    this.emit("notice", {
+      text: "Back at the castle entrance. Keys, opened doors and machinery are preserved.",
+    });
+  }
   move(entity, dt, horizontal, vertical, speed, poles = true) {
     entity.walking = false;
     if (entity.climbing) {
@@ -347,19 +370,34 @@ export class ClassicGame {
         l.yTop,
       );
       entity.walking = Math.abs(entity.y - oldY) > 0.001;
-      const stop = l.stops.find((y) => Math.abs(y - entity.y) < 0.12);
+      const stop = crossedLanding(l.stops, oldY, entity.y, dir, horizontal);
       const endpoint =
         (entity.y === l.yTop && dir > 0) || (entity.y === l.yBottom && dir < 0);
       if (stop !== undefined && (endpoint || horizontal)) {
-        entity.y = stop;
-        entity.climbing = null;
+        const landings = this.room.platforms.filter(
+          (p) =>
+            Math.abs(p.y - stop) < EPS &&
+            l.x >= p.min - 0.28 &&
+            l.x <= p.max + 0.28,
+        );
+        const landing = landings.find((p) =>
+          horizontal > 0 ? p.max > l.x : horizontal < 0 ? p.min < l.x : true,
+        );
+        if (landing || endpoint) {
+          const surface = landing || landings[0];
+          if (surface) {
+            entity.y = stop;
+            entity.x = clamp(l.x, surface.min + 0.2, surface.max - 0.2);
+            entity.climbing = null;
+          }
+        }
       }
       return;
     }
     if (vertical) {
       const ladder = this.room.ladders.find(
         (l) =>
-          Math.abs(l.x - entity.x) < 0.4 &&
+          Math.abs(l.x - entity.x) < 0.55 &&
           entity.y >= l.yBottom - EPS &&
           entity.y <= l.yTop + EPS &&
           (vertical > 0 ? entity.y < l.yTop - EPS : entity.y > l.yBottom + EPS),
@@ -369,7 +407,7 @@ export class ClassicGame {
         poles &&
         this.room.poles.find(
           (l) =>
-            Math.abs(l.x - entity.x) < 0.4 &&
+            Math.abs(l.x - entity.x) < 0.55 &&
             entity.y > l.yBottom + EPS &&
             entity.y <= l.yTop + EPS,
         );
@@ -436,11 +474,18 @@ export class ClassicGame {
     const p = this.player;
     if (e.climbing) {
       const l = e.climbing;
+      const dir = l.pole ? -1 : l.intent || Math.sign(p.y - e.y);
+      const landing = l.stops.find(
+        (y) =>
+          Math.abs(y - p.y) < EPS &&
+          dir * (y - e.y) > 0 &&
+          Math.abs(y - e.y) <= (l.pole ? 4.2 : 2.6) * dt + 0.001,
+      );
       this.move(
         e,
         dt,
-        0,
-        l.pole ? -1 : l.intent || Math.sign(p.y - e.y),
+        landing === undefined ? 0 : Math.sign(p.x - e.x) || 1,
+        dir,
         e.speed,
       );
       return;
@@ -457,10 +502,18 @@ export class ClassicGame {
           l.stops.some((y) => dir * (y - e.y) > 0.2),
       );
       const target = links
-        .filter((l) => this.connected(e.x, l.x, e.y))
+        .filter((l) =>
+          this.room.platforms.some(
+            (s) =>
+              Math.abs(s.y - e.y) < EPS &&
+              l.x >= s.min - 0.28 &&
+              l.x <= s.max + 0.28 &&
+              this.connected(e.x, clamp(l.x, s.min, s.max), e.y),
+          ),
+        )
         .sort((a, b) => Math.abs(a.x - e.x) - Math.abs(b.x - e.x))[0];
       if (target) {
-        if (Math.abs(target.x - e.x) < 0.3) {
+        if (Math.abs(target.x - e.x) < 0.55) {
           this.move(e, dt, 0, dir, e.speed);
           if (e.climbing) e.climbing.intent = dir;
         } else this.move(e, dt, Math.sign(target.x - e.x), 0, e.speed);
@@ -491,6 +544,7 @@ export class ClassicGame {
   hazards(entity, isPlayer = false) {
     for (const trap of this.room.traps)
       if (
+        !entity.climbing &&
         this.switches[trap.switch] &&
         Math.abs(entity.y - trap.y) < 0.12 &&
         Math.abs(entity.x - trap.x) < trap.width / 2 - 0.3
@@ -534,7 +588,24 @@ export class ClassicGame {
       v = (input.up ? 1 : 0) - (input.down ? 1 : 0),
       near = this.nearby();
     let operating = false;
-    if (v && !h && near?.type === "teleporter") {
+    const gripping =
+      p.climbing ||
+      (v &&
+        [
+          ...this.room.ladders.filter((l) =>
+            v > 0 ? p.y < l.yTop - EPS : p.y > l.yBottom + EPS,
+          ),
+          ...(v < 0
+            ? this.room.poles.filter((l) => p.y > l.yBottom + EPS)
+            : []),
+        ].some(
+          (l) =>
+            p.y >= l.yBottom - EPS &&
+            p.y <= l.yTop + EPS &&
+            Math.abs(l.x - p.x) < 0.55 &&
+            Math.abs(l.x - p.x) <= Math.abs((near?.x ?? Infinity) - p.x) + 0.01,
+        ));
+    if (!gripping && v && !h && near?.type === "teleporter") {
       operating = true;
       if (this.selectionCooldown === 0) {
         const n = near.targets.length;
@@ -543,7 +614,7 @@ export class ClassicGame {
         this.selectionCooldown = 0.28;
       }
     }
-    if (v && !h && near?.kind === "gun") {
+    if (!gripping && v && !h && near?.kind === "gun") {
       operating = true;
       const gun = this.guns.find((g) => g.id === near.gun);
       gun.y = clamp(gun.y + v * 2.2 * dt, gun.yBottom, gun.yTop);
@@ -554,7 +625,9 @@ export class ClassicGame {
       if (!e.alive) continue;
       if (
         !e.active &&
-        Math.abs(p.x - e.trigger.x) < 0.65 &&
+        (e.kind === "creature"
+          ? (p.x - e.trigger.x) * (e.wakeDirection ?? 1) >= 0
+          : Math.abs(p.x - e.trigger.x) < 0.65) &&
         Math.abs(p.y - e.trigger.y) < 0.3
       ) {
         e.active = true;
@@ -582,6 +655,7 @@ export class ClassicGame {
           .map((e) => [e.id, e]),
       ])
         if (
+          !entity.climbing &&
           Math.abs(entity.x - s.x) < 0.36 &&
           Math.abs(entity.y - s.y) < 0.15
         ) {

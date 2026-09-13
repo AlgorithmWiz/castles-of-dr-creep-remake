@@ -1,5 +1,6 @@
 import originals from "./data/original-castles.js";
 import { ROOMS } from "./levels.js";
+import { LESSONS } from "./tutorial.js";
 
 export const PALETTE = [
   0x202820, 0xe0e4d8, 0xce6657, 0x73c9cf, 0xb988c8, 0x85ad6a, 0x6e88ce,
@@ -239,9 +240,10 @@ function convertRoom(raw, castle) {
     });
     room.traps.push({
       id,
-      x: X(d[1] + 10),
+      x: X(d[1] + 6),
       y: Y(d[2]),
-      width: 20 * 0.135,
+      // Original trap graphic is three four-unit columns, not a door's width.
+      width: 12 * 0.135,
       switch: id,
       source: d,
     });
@@ -283,6 +285,7 @@ function convertRoom(raw, castle) {
       ...point(d[1], d[2], 8, 24),
       trigger: point(d[1], d[2], 8, 24),
       dormant: !(d[0] & 2),
+      wakeDirection: d[0] & 1 ? -1 : 1,
       speed: 1.55,
       source: d,
     }),
@@ -339,13 +342,7 @@ function convertRoom(raw, castle) {
     : { x: platforms[0].min + 0.7, y: platforms[0].y };
   if (castle.id === "tutorial") {
     room.objective = room.name;
-    room.description = room.notes
-      .slice(1)
-      .join(" ")
-      .replace(/JOYSTICK LEVER/g, "UP / DOWN KEYS")
-      .replace(/TRIGGER BUTTON/g, "E KEY")
-      .toLowerCase()
-      .replace(/(^|\.\s)\S/g, (c) => c.toUpperCase());
+    room.description = LESSONS[raw.id];
     room.hint = room.description;
   }
   return room;

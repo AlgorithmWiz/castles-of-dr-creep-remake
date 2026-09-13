@@ -76,7 +76,15 @@ export class RemakeScene extends CastleScene {
     }
     for (const y of [0, 3.85, 7.7])
       for (const x of [-7.9, 0, 7.9])
-        this.window(x, y + 0.35, 2.5, 3, trim, index % 6);
+        this.window(
+          x,
+          y + 0.35,
+          2.5,
+          3,
+          trim,
+          index % 6,
+          y === 7.7 && x === 7.9,
+        );
     for (const x of [-4.1, 4.1]) {
       cylinder(root, x, 5.8, -1.03, 0.2, 0.25, 11.4, stone, 10);
       for (let y of [0.2, 4, 8, 11.5])
@@ -105,16 +113,6 @@ export class RemakeScene extends CastleScene {
         start = Math.max(start, t.x + t.width / 2);
       }
       this.platform(start, p.max, p.y, trim, dark, brass);
-      box(
-        root,
-        (p.min + p.max) / 2,
-        p.y - 0.27,
-        1.54,
-        p.max - p.min,
-        0.07,
-        0.03,
-        material(PALETTE[room.color], 0.1, 0.9, 0.1),
-      );
     }
     const torchSites = [
       [-10, 2.2],
@@ -129,7 +127,7 @@ export class RemakeScene extends CastleScene {
       cylinder(
         root,
         p.x,
-        (p.yTop + p.yBottom) / 2 + 0.12,
+        (p.yTop + p.yBottom) / 2 + 0.18,
         0.3,
         0.045,
         0.045,
@@ -144,7 +142,13 @@ export class RemakeScene extends CastleScene {
       this.key(k);
       this.keyMeshes.at(-1).group.scale.setScalar(0.72);
     }
-    for (const s of room.switches) this.switch(s);
+    for (const [i, s] of room.switches.entries())
+      if (
+        !room.switches
+          .slice(0, i)
+          .some((q) => q.kind === s.kind && q.x === s.x && q.y === s.y)
+      )
+        this.switch(s);
     for (const f of room.fields) this.field(f);
     for (const l of room.lightning) this.lightning(l);
     for (const t of room.traps) this.trap(t);
@@ -210,7 +214,6 @@ export class RemakeScene extends CastleScene {
         );
       }
     }
-    if (room.notes.length) this.tutorialPlaque(room);
     this.cobweb(-10.8, 11.4);
     this.cobweb(10.9, 6.8, -1);
     this.dust(rand);
@@ -242,45 +245,6 @@ export class RemakeScene extends CastleScene {
     );
     sign.castShadow = false;
     return sign;
-  }
-  tutorialPlaque(room) {
-    const c = document.createElement("canvas");
-    c.width = 1024;
-    c.height = 512;
-    const ctx = c.getContext("2d");
-    ctx.fillStyle = "#1b2720";
-    ctx.fillRect(0, 0, 1024, 512);
-    ctx.strokeStyle = "#8e8051";
-    ctx.lineWidth = 5;
-    ctx.strokeRect(15, 15, 994, 482);
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#dbcc9d";
-    ctx.font = "44px Georgia";
-    ctx.fillText(room.name, 512, 82);
-    ctx.fillStyle = "#aebb9f";
-    ctx.font = "25px Georgia";
-    const words = room.description.split(" "),
-      lines = [];
-    let text = "";
-    for (const word of words) {
-      if (ctx.measureText(text + " " + word).width > 910) {
-        lines.push(text);
-        text = word;
-      } else text += (text ? " " : "") + word;
-    }
-    if (text) lines.push(text);
-    lines.slice(0, 9).forEach((l, i) => ctx.fillText(l, 512, 143 + i * 35));
-    const texture = new THREE.CanvasTexture(c);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    (this.roomTextures ||= []).push(texture);
-    mesh(
-      new THREE.PlaneGeometry(10, 5),
-      new THREE.MeshStandardMaterial({ map: texture, roughness: 1 }),
-      this.root,
-      0,
-      8.8,
-      -1.1,
-    );
   }
   switch(s) {
     if (!this.original) return super.switch(s);
@@ -342,7 +306,16 @@ export class RemakeScene extends CastleScene {
     }
     this.switchMeshes.push({ data: s, group, handle });
     if (s.door !== undefined)
-      this.label(String(s.door + 1), s.x, s.y + 1.14, -0.16, 0.45);
+      this.label(
+        this.room.switches
+          .filter((q) => q.kind === s.kind && q.x === s.x && q.y === s.y)
+          .map((q) => q.door + 1)
+          .join(" / "),
+        s.x,
+        s.y + 1.14,
+        -0.16,
+        0.6,
+      );
   }
   lightning(data) {
     if (!this.original) return super.lightning(data);

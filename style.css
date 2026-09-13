@@ -1636,6 +1636,73 @@ input[type="range"] {
   height: 100vh;
   max-height: none;
 }
+.tutorial-lesson {
+  margin: 0 0 16px;
+  padding: 20px 24px;
+  border: 1px solid #59604b;
+  border-left: 3px solid #c4ad77;
+  border-radius: 5px;
+  background: #1b2520;
+  color: #edf0e5;
+}
+.tutorial-lesson h2 {
+  margin: 8px 0;
+  font:
+    26px Georgia,
+    serif;
+  color: #ecd8a4;
+}
+.tutorial-lesson p {
+  margin: 0;
+  max-width: 85ch;
+  font:
+    16px/1.65 system-ui,
+    sans-serif;
+}
+.lesson-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 15px;
+  color: #d1d8c8;
+  font:
+    13px/1.6 system-ui,
+    sans-serif;
+}
+.game-column:fullscreen {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  padding: 12px;
+  background: #111716;
+  overflow: auto;
+}
+.game-column:fullscreen .chapter-heading,
+.game-column:fullscreen .below-stage {
+  display: none;
+}
+.game-column:fullscreen .stage {
+  flex: 1;
+  min-height: 260px;
+  max-height: none;
+  width: 100%;
+}
+.game-column:fullscreen .tutorial-lesson {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+@media (max-width: 560px) {
+  .tutorial-lesson {
+    padding: 16px;
+  }
+  .tutorial-lesson h2 {
+    font-size: 23px;
+  }
+  .tutorial-lesson p {
+    font-size: 15px;
+  }
+}
 .stage:fullscreen .stage-bottom {
   bottom: 24px;
 }

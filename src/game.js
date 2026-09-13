@@ -1,5 +1,6 @@
 import { ROOMS, FLOORS, KEY_NAMES } from "./levels.js";
 import { beginEnemyDeath, advanceEnemyDeath } from "./enemy-death.js";
+import { crossedLanding } from "./walkway.js";
 
 export class Game {
   constructor(onEvent = () => {}) {
@@ -221,6 +222,7 @@ export class Game {
     if (p.climbing) {
       const l = p.climbing;
       const dir = l.pole ? -1 : vertical;
+      const oldY = p.y;
       p.y = Math.max(
         FLOORS[l.from < l.to ? l.from : l.to],
         Math.min(
@@ -229,7 +231,8 @@ export class Game {
         ),
       );
       p.walking = dir !== 0;
-      const floor = FLOORS.findIndex((y) => Math.abs(y - p.y) < 0.07);
+      const stop = crossedLanding(FLOORS, oldY, p.y, dir, horizontal);
+      const floor = FLOORS.indexOf(stop);
       const atEndpoint =
         (dir > 0 && p.y >= FLOORS[l.to] - 0.001 && !l.pole) ||
         (dir < 0 && p.y <= FLOORS[l.pole ? l.to : l.from] + 0.001);
@@ -264,6 +267,7 @@ export class Game {
         this.die("A shocking turn of events. Try the yellow switch.");
     for (const trap of this.room.traps)
       if (
+        !p.climbing &&
         this.switches[trap.switch] &&
         Math.abs(p.y - FLOORS[trap.floor]) < 0.15 &&
         Math.abs(p.x - trap.x) < trap.width / 2 - 0.15

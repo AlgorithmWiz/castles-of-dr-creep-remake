@@ -137,6 +137,11 @@
                 if (!o.position.toArray().every(Number.isFinite))
                   throw Error("Nonfinite object");
               view.render(game, 0.016);
+              if (
+                view.root.children.filter((o) => o.name === "exterior-moon")
+                  .length !== 1
+              )
+                throw Error("Room must show exactly one moon");
               count++;
               maxGeometry = Math.max(
                 maxGeometry,

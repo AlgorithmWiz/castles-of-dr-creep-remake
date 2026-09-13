@@ -6,6 +6,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { FLOORS } from "./levels.js";
 import { KEY_INFO } from "./catalog.js";
 import { deathPose } from "./enemy-death.js";
+import { climbingOpenings } from "./walkway.js";
 
 const TAU = Math.PI * 2;
 const KEY_COLORS = { bronze: 0xf2b95f, silver: 0x9deaff, gold: 0xffdb6f };
@@ -347,7 +348,15 @@ export class CastleScene {
     for (const floor of [0, 1, 2]) {
       const y = FLOORS[floor];
       for (const x of [-7.7, -0.15, 7.5])
-        this.window(x, y + 0.35, index === 3 ? 2.7 : 2.4, 2.55, trim, index);
+        this.window(
+          x,
+          y + 0.35,
+          index === 3 ? 2.7 : 2.4,
+          2.55,
+          trim,
+          index,
+          floor === 2 && x === 7.5,
+        );
       for (const x of [-4, 3.9]) {
         box(root, x, y + 1.55, -1.09, 0.34, 2.9, darkStone);
         box(root, x, y + 0.16, -0.97, 0.65, 0.3, trim);
@@ -411,7 +420,7 @@ export class CastleScene {
       cylinder(
         root,
         p.x,
-        (FLOORS[p.from] + FLOORS[p.to]) / 2 + 0.3,
+        (FLOORS[p.from] + FLOORS[p.to]) / 2 + 0.325,
         0.25,
         0.053,
         0.053,
@@ -454,19 +463,36 @@ export class CastleScene {
     this.dust(rand);
   }
   platform(from, to, y, trim, dark, brass) {
+    let start = from;
+    for (const hole of climbingOpenings(this.room, from, to, y)) {
+      this.solidPlatform(start, hole.min, y, trim, dark, brass);
+      const width = hole.max - hole.min,
+        x = (hole.min + hole.max) / 2;
+      // Recessed rear walkway and metal jambs make the shaft visibly open.
+      box(this.root, x, y - 0.17, -1.16, width, 0.34, 0.55, dark);
+      box(this.root, x, y + 0.015, -0.87, width, 0.055, 0.06, brass);
+      for (const edge of [hole.min, hole.max])
+        box(this.root, edge, y - 0.14, 0.3, 0.055, 0.28, 2.35, brass);
+      start = hole.max;
+    }
+    this.solidPlatform(start, to, y, trim, dark, brass);
+  }
+  solidPlatform(from, to, y, trim, dark, brass) {
     if (to <= from) return;
     const w = to - from,
       x = (to + from) / 2;
     box(this.root, x, y - 0.17, 0.02, w, 0.34, 2.9, trim);
-    box(this.root, x, y - 0.4, -0.06, w + 0.05, 0.15, 2.78, dark);
+    box(this.root, x, y - 0.4, -0.06, w, 0.15, 2.78, dark);
     box(this.root, x, y - 0.29, 1.5, w, 0.055, 0.065, brass);
-    for (let tx = from + 0.3; tx < to; tx += 1.05) {
+    for (let edge = from; edge < to; edge += 1.05) {
+      const width = Math.min(1, to - edge),
+        tx = edge + width / 2;
       box(
         this.root,
         tx,
         y + 0.012,
         0.01,
-        Math.min(1, to - tx + 0.2),
+        width,
         0.032,
         2.78,
         material(0x858d77),
@@ -475,7 +501,7 @@ export class CastleScene {
         box(this.root, tx, y - 0.57, 1.04, 0.19, 0.2, 0.48, dark);
     }
   }
-  window(x, y, w, h, trim, index) {
+  window(x, y, w, h, trim, index, showMoon = false) {
     const root = this.root,
       z = -1.36;
     const shape = new THREE.ShapeGeometry(archShape(w, h));
@@ -527,14 +553,15 @@ export class CastleScene {
     }
     box(root, x, y + h * 0.43, z + 0.17, w, 0.05, 0.055, this.iron);
     box(root, x, y - 0.07, z + 0.18, w + 0.65, 0.16, 0.62, trim);
-    sphere(
-      root,
-      x - 0.25,
-      y + h - 0.8,
-      z + 0.05,
-      0.19,
-      material(0xc2d5c1, 0, 1, 0.6),
-    );
+    if (showMoon)
+      sphere(
+        root,
+        x - 0.25,
+        y + h - 0.8,
+        z + 0.05,
+        0.19,
+        material(0xc2d5c1, 0, 1, 0.6),
+      ).name = "exterior-moon";
     // Soft diagonal shafts, kept behind the play plane.
     const rayGeo = new THREE.BufferGeometry();
     rayGeo.setAttribute(
@@ -649,10 +676,10 @@ export class CastleScene {
       box(
         this.root,
         l.x + side * 0.36,
-        (y1 + y2) / 2 + 0.1,
+        (y1 + y2) / 2 + 0.22,
         0.38,
         0.095,
-        y2 - y1 + 0.5,
+        y2 - y1 + 0.44,
         0.15,
         wood,
       );

@@ -156,6 +156,11 @@ function castleUI() {
   $("continue-btn").classList.toggle("hidden", !saved);
 }
 function roomUI() {
+  $("tutorial-lesson").classList.toggle("hidden", castle.id !== "tutorial");
+  $("lesson-number").textContent =
+    `LESSON ${game.roomIndex + 1} OF ${castle.rooms.length}`;
+  $("lesson-title").textContent = game.room.name;
+  $("lesson-copy").textContent = game.room.description;
   $("room-name").textContent = game.room.name;
   $("room-number").textContent = String(game.roomIndex + 1).padStart(2, "0");
   $("objective-title").textContent = game.room.objective;
@@ -331,6 +336,20 @@ function showPause() {
     closeModal();
     game.retry();
   };
+  if (castle.original) {
+    $("retry-btn").insertAdjacentHTML(
+      "beforebegin",
+      '<button class="text-button" id="return-btn">Return to this room’s entrance · keep machinery</button><button class="text-button" id="recall-btn">Return to castle entrance · keep discoveries</button>',
+    );
+    $("return-btn").onclick = () => {
+      closeModal();
+      game.retry(false);
+    };
+    $("recall-btn").onclick = () => {
+      closeModal();
+      game.recall();
+    };
+  }
   $("new-btn").onclick = () => {
     openModal(
       "new",
@@ -385,7 +404,7 @@ $("sound-btn").onclick = () => {
 $("fullscreen-btn").onclick = async () => {
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
-    else await $("stage").requestFullscreen();
+    else await $("game-column").requestFullscreen();
   } catch {
     notify("Fullscreen is unavailable in this browser window.");
   }

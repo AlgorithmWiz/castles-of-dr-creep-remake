@@ -24,6 +24,9 @@ Open [the game](http://localhost:3000). The server binds to the local machine. T
 - **M:** actual castle map. **Esc:** pause. **R:** reset the current room’s machinery and enemies while retaining keys and opened passages.
 - Lightning switches toggle their connected machines. Red buttons lower force fields for eight seconds. Conveyor controls cycle movement and direction. Crossing a trapdoor’s pressure control toggles the trap.
 - Ankhs awaken mummies. Coffins awaken Frankenstein monsters, which can climb. Lure residents into open traps, lightning or ray-gun fire. Defeated enemies have distinct fall, electrocution and impact animations, with debris and a gradual fade.
+- Frankenstein wakes when you enter the open side of his coffin’s line of sight, even across a gap. He can operate floor controls that you cannot reach.
+- The pause menu can return you to the current room or castle entrance while preserving keys, doors and machinery. This recovers one-way routes in the single-player remake. A separate option resets the current room’s machinery.
+- Tutorial instructions appear in a readable panel outside the game scenery, including in fullscreen. Ladders and poles pass through recessed floor openings; stepping sideways exits at a landing.
 - You cannot jump. Death returns you to the room entrance, with unlimited retries. Original-castle puzzle state persists across rooms and deaths. Blackthorn retains its original room-reset behavior.
 - Every castle saves separately in browser localStorage, and conquered estates get a completion badge. The existing Blackthorn save format is retained. Use Continue after reloading; Pause → Restart this castle starts over in the selected estate.
 - Sound starts muted. Settings include volume and a lighter graphics mode. Touch controls appear on touch devices; landscape gives a larger view.
@@ -66,7 +69,9 @@ Online progress is saved in the browser on the GitHub Pages domain, separately f
 npm test
 ```
 
-Tests cover all castle and room counts, exact platform conversion, door and mechanism references, structural routes to every room/key/exit, original movement and machinery, save round-trips, pause behavior, enemy death phases, and complete no-death routes through the tutorial and Blackthorn. Structural route analysis ignores timed hazards and conveyor resistance; it does not substitute for a manual play-through of every castle.
+Tests cover all castle and room counts, exact platform conversion, door and mechanism references, structural routes to every room/key/exit, original movement and machinery, save round-trips, pause behavior, and enemy death phases. Every imported ladder/pole landing is exercised at 20 and 60 fps, including the 94 landings just outside a platform edge. Regression tests cover climbing over traps, shared controls, the original trap footprint, and Sylvania’s remote monster-operated trap puzzle.
+
+Complete input replays verify the tutorial, Blackthorn, Rittenhouse and Lovecraft with hazards enabled. Rittenhouse uses the pause menu’s entrance recovery. Other castles have structural and mechanism coverage; full completion of each has not yet been verified. Structural route analysis ignores timed hazards and conveyor resistance and is not a substitute for an end-to-end play-through.
 
 Open [renderer verification](http://localhost:3000/tests/visual.html) to render all **223** rooms, inspect individual rooms, and scrub each enemy death animation. All 223 rooms were rendered successfully in the browser. This page never writes gameplay saves.
 

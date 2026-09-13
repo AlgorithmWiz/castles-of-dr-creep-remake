@@ -1,0 +1,174 @@
+{
+  "castle": "lovecraft",
+  "won": true,
+  "actions": [
+    {
+      "kind": "use",
+      "x": -7.0200000000000005,
+      "target": "bell-0"
+    },
+    {
+      "kind": "use",
+      "x": -8.370000000000001,
+      "target": "door-0"
+    },
+    {
+      "kind": "use",
+      "x": 9.45,
+      "target": "door-1"
+    },
+    {
+      "kind": "climb",
+      "x": -7.29,
+      "y": 2.88
+    },
+    {
+      "kind": "use",
+      "x": -7.0200000000000005,
+      "target": "bell-5"
+    },
+    {
+      "kind": "climb",
+      "x": -2.97,
+      "y": 0
+    },
+    {
+      "kind": "use",
+      "x": 2.16,
+      "target": "bell-4"
+    },
+    {
+      "kind": "use",
+      "x": 1.35,
+      "target": "door-8"
+    },
+    {
+      "kind": "use",
+      "x": -7.02,
+      "target": "bell-0"
+    },
+    {
+      "kind": "use",
+      "x": 6.4799999999999995,
+      "target": "bell-1"
+    },
+    {
+      "kind": "use",
+      "x": 0.81,
+      "target": "door-3"
+    },
+    {
+      "kind": "climb",
+      "x": 5.13,
+      "y": 5.76
+    },
+    {
+      "kind": "use",
+      "x": 5.94,
+      "target": "bell-1"
+    },
+    {
+      "kind": "use",
+      "x": 8.91,
+      "target": "door-1"
+    },
+    {
+      "kind": "climb",
+      "x": -0.27,
+      "y": 0
+    },
+    {
+      "kind": "use",
+      "x": -9.18,
+      "target": "trap-4"
+    },
+    {
+      "kind": "return"
+    },
+    {
+      "kind": "use",
+      "x": -8.91,
+      "target": "door-0"
+    },
+    {
+      "kind": "climb",
+      "x": 5.13,
+      "y": 9.6
+    },
+    {
+      "kind": "use",
+      "x": 0.54,
+      "target": "bell-2"
+    },
+    {
+      "kind": "use",
+      "x": 4.32,
+      "target": "bell-3"
+    },
+    {
+      "kind": "use",
+      "x": -1.3499999999999999,
+      "target": "door-3"
+    },
+    {
+      "kind": "use",
+      "x": -9.719999999999999,
+      "target": "bell-0"
+    },
+    {
+      "kind": "use",
+      "x": 9.18,
+      "target": "bell-4"
+    },
+    {
+      "kind": "teleport",
+      "x": -1.08,
+      "turns": 0
+    },
+    {
+      "kind": "use",
+      "x": 6.4799999999999995,
+      "target": "bell-2"
+    },
+    {
+      "kind": "use",
+      "x": -0.54,
+      "target": "power-1"
+    },
+    {
+      "kind": "use",
+      "x": 8.91,
+      "target": "door-4"
+    },
+    {
+      "kind": "use",
+      "x": -4.32,
+      "target": "bell-0"
+    },
+    {
+      "kind": "use",
+      "x": 6.4799999999999995,
+      "target": "bell-2"
+    },
+    {
+      "kind": "use",
+      "x": -1.08,
+      "target": "power-4"
+    },
+    {
+      "kind": "use",
+      "x": -5.13,
+      "target": "door-1"
+    }
+  ],
+  "elapsed": 54.034449830514646,
+  "returns": 0,
+  "visited": [
+    0,
+    7,
+    12,
+    8,
+    3,
+    4
+  ]
+}

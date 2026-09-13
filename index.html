@@ -76,7 +76,7 @@
     </header>
 
     <main>
-      <section class="game-column">
+      <section class="game-column" id="game-column">
         <div class="chapter-heading">
           <div>
             <div class="eyebrow">
@@ -94,6 +94,20 @@
             >
           </div>
         </div>
+        <section
+          class="tutorial-lesson hidden"
+          id="tutorial-lesson"
+          aria-labelledby="lesson-title"
+        >
+          <div class="eyebrow" id="lesson-number">THE DOCTOR’S FIELD NOTES</div>
+          <h2 id="lesson-title"></h2>
+          <p id="lesson-copy"></p>
+          <div class="lesson-controls">
+            <span><kbd>↑</kbd> <kbd>↓</kbd> Climb · release to hold</span
+            ><span><kbd>←</kbd> <kbd>→</kbd> Step off at a landing</span
+            ><span><kbd>E</kbd> Use nearby objects</span>
+          </div>
+        </section>
         <div class="stage" id="stage">
           <div
             id="canvas-host"
